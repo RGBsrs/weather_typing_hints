@@ -20,11 +20,14 @@ class PlainFileWeatherStorage(WeatherStorage):
     """
 
     def __init__(self, file_path: Path) -> None:
-        self.file_path = file_path
+        self._file_path = file_path
 
     def save_weather(self, weather: Weather) -> None:
         now = datetime.now()
         formatted_weather = format_weather(weather)
-        with open(self.file_path, 'a') as f:
+        with open(self._file_path, 'a') as f:
             f.write(f"{now}\n{formatted_weather}\n")
 
+
+def save_weather(weather: Weather, storage: WeatherStorage) -> None:
+    storage.save_weather(weather)
