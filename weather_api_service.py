@@ -49,12 +49,15 @@ def _get_openweather_response(latitude: float = 0, longitude: float = 0) -> dict
     """
     Get the response from the OpenWeather API.
     """
-    API_URL = f"""https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&appid={config['OPEN_WEATHER_API_KEY']}"""
-    
-    response = requests.get(API_URL)
+    API_URL = f"""https://api.openweathermap.org/data/3.0/onecall?lat={latitude}&lon={longitude}&units=metric&appid={config['OPEN_WEATHER_API_KEY']}"""
+    try:
+        response = requests.get(API_URL)
+    except requests.exceptions.RequestException:
+        raise APIServiceError("Invalid response from OpenWeather API.")
     if response.status_code != 200:
         raise APIServiceError(response.status_code)
-    return response.json()
+    else:
+        return response.json()
 
 def _parse_openweather_response(response: dict) -> Weather:
     """
@@ -77,6 +80,7 @@ def _parse_temperature (response: dict) -> Celsius:
     """
     Parse the temperature from the OpenWeather API response.
     """
+
     return response["current"]["temp"]
 
 def _parse_weather_type(response: dict) -> WeatherType:
@@ -98,7 +102,7 @@ def _parse_weather_type(response: dict) -> WeatherType:
         "80": WeatherType.CLOUDS,
     }
     for _id, weather_type in weather_types.items():
-        if str(_id) == str(wether_type_id):
+        if str(wether_type_id).startswith(_id):
             return weather_type
     raise APIServiceError("Invalid response from OpenWeather API.")
 
@@ -108,7 +112,8 @@ def _parse_sun_time(
     """
     Parse the sunrise from the OpenWeather API response.
     """
+
     return datetime.fromtimestamp(response["current"][time])
 
 if __name__ == "__main__":
-    get_weather(Coordinates(longitude=50.45, latitude=30.35))
+    print(get_weather(Coordinates(longitude=30.52, latitude=50.45)))
