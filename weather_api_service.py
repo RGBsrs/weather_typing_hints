@@ -1,9 +1,17 @@
 from datetime import datetime
 from enum import Enum
 from typing import NamedTuple
+from dotenv import dotenv_values
 
 from .coordinates import Coordinates
 
+
+config = dotenv_values()
+
+API_URL = f"""https://api.openweathermap.org/data/3.0/onecall?
+            lat={config['LATITUDE']}&
+            lon={config['LONGITUDE']}&
+            appid={config['OPEN_WEATHER_API_KEY']}"""
 
 Celsius = int
 

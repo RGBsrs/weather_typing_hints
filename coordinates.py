@@ -1,5 +1,10 @@
 from typing import NamedTuple
 
+from dotenv import dotenv_values
+
+
+config = dotenv_values()
+
 
 class Coordinates(NamedTuple):
     longitude: float
@@ -10,8 +15,8 @@ def get_coordinates() -> Coordinates:
     Get the coordinates from the user.
     """
 
-    longitude = 50.4546600
-    latitude = 30.5238000
+    longitude = config["LONGITUDE"]
+    latitude = config["LATITUDE"]
 
     return Coordinates(longitude=longitude, latitude=latitude)
 
